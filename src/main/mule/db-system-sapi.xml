@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="sahastra-db-system-apiFlow" doc:id="4617a5c0-0257-45f8-885e-f8fd0e5286c6" >
+		<http:listener doc:name="Listener" doc:id="26969a0c-f987-4122-9442-cb854a1fa9bc" config-ref="HTTP_Listener_config" path="/createSales" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="bf5706e3-ad7f-4a3e-a9e6-0999937e0572" message="#[payload]"/>
+		<db:bulk-insert doc:name="Bulk insert" doc:id="d0f5d5a3-31fb-4354-a5fa-41d0584b3c71" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into million_records_table
+(region,country, itemType, salesChannel, orderPriority, orderDate, orderID, shipDate, unitsSold, unitPrice, unitCost, totalRevenue, totalCost,totalProfit
+) 
+values (:region,:country, :itemType,:salesChannel,:orderPriority,:orderDate,:orderID,:shipDate,:unitsSold,:unitPrice,:unitCost,:totalRevenue,:totalCost,:totalProfit)]]></db:sql>
+		</db:bulk-insert>
+		<db:delete doc:name="deleteHeader" doc:id="013901f1-489e-45bd-907c-7492bf734589" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from million_records_table where region='Region']]></db:sql>
+		</db:delete>
+		<logger level="INFO" doc:name="Logger" doc:id="91cd8f3e-2cf1-4565-aaf3-90df781c608b" message="end DB insert" />
+	</flow>
+	</mule>
